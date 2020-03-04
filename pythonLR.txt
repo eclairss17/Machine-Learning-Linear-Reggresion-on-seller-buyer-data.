@@ -1,0 +1,55 @@
+
+from random import uniform
+
+class LinearRegression:
+    sample = [3520, 192, 91, 9271]
+    outcome = [20, 3, 0, 88]
+
+    def __init__(self):
+        startingWeightValue = uniform(0, 1)
+        startingBias = uniform(0, 1)
+        learningRate = 0.00000004
+        frequency = 2000
+
+        print('Starting weight {}, Starting bias {}, Learning rate {}, frequency {}'.format(startingWeightValue, startingBias, learningRate, frequency))
+        finalWeight, finalBias = self.learn(self.outcome, startingWeightValue, startingBias, self.sample, learningRate, frequency)
+        finalError = self.cost(self.outcome, finalWeight, finalBias, self.sample)
+        print('Final weight {:.4f}, Final bias {:.4f}, Final error {:.4f}, estimation {:.4f} out of {}, estimation Two {:.4f} out of {}'.format(finalWeight, finalBias, finalError, self.estimation(self.sample[1], finalWeight, finalBias), self.outcome[1], self.estimation(self.sample[3], finalWeight, finalBias), self.outcome[3]))
+
+    # Python implementation
+    def estimation(self, x, w, b):
+        return w * x + b
+
+    # The cost function implemented in python
+    def cost(self, outcome, w, b, sample):
+        error = 0.0
+        countDataSetPoints = len(sample)
+        for i in range(countDataSetPoints):
+            error += (outcome[i] - (w * sample[i] + b)) ** 2
+        return error / countDataSetPoints
+
+    # Python implementation, returns the optimized weight and bias for that step
+    def optimizerFunction(self, outcome, w, b, sample, learningRate):
+        weightDerived = 0
+        biasDerived = 0
+        countDataSetPoints = len(outcome)
+        for i in range(countDataSetPoints):
+            weightDerived += -2 * sample[i] * (outcome[i] - (sample[i] * w + b))
+            biasDerived += -2 * (outcome[i] - (sample[i] * w + b))
+
+        w -= (weightDerived / countDataSetPoints) * learningRate
+        b -= (biasDerived / countDataSetPoints) * learningRate
+
+        return w, b
+
+    # Python implementation
+    def learn(self, outcome, w, b, sample, learningRate, frequency):
+        error = 0
+        for i in range(frequency):
+            w, b = self.optimizerFunction(outcome, w, b, sample, learningRate)
+            error = self.cost(outcome, w, b, sample)
+            print("Iteration: {}, weight: {:.4f}, bias: {:.4f}, error: {:.2f}".format(i, w, b, error))
+        return w, b
+
+# Initialize the class
+LinearRegression()
